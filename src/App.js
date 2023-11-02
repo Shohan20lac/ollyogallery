@@ -1,24 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
+import Grid from './components/Grid';
+import Topbar from './components/Topbar';
+import "./styles.css"
+
+const Body = ({children}) => (
+  <div className="background-panel">
+    <div className="foreground-card">
+      {children}
+    </div>
+  </div>
+  
+)
+
+const Divider = () =>
+  <div style = {{backgroundColor:'black', width: `100%`, height:`1px`}}>
+  </div>
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Body>
+      <Topbar/>
+      <Divider/>
+      <Grid/>
+    </Body>
   );
 }
 
