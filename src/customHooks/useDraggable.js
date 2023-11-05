@@ -1,41 +1,60 @@
 import * as React from "react";
 
-const useDraggable = ({ totalBlocks, blockInRow }) => {
+const useDraggable = ({ totalBlocks }) => {
+  const containerRef = React.useRef(null);
+
   const [coordinate, setCoordinate] = React.useState({
     blocks: new Array(totalBlocks).fill(1).map((_, index) => {
-      const col = Math.floor(index % blockInRow);
-      const row = Math.floor(index / blockInRow);
-      return { x: col * 120 + col * 8, y: 120 * row + row * 8 };
+      return { x: 0, y: 0 }; // Initialize all blocks at (0, 0)
     }),
     pointer: { x: 0, y: 0 },
     movingBlockIndex: null
   });
 
-  const handleMouseMove = React.useCallback(
-    (event) => {
-      if (coordinate.movingBlockIndex === null) {
-        return;
-      }
-      const coordinates = { x: event.clientX, y: event.clientY };
-
-      setCoordinate((prev) => {
-        const diff = {
-          x: coordinates.x - prev.pointer.x,
-          y: coordinates.y - prev.pointer.y
-        };
-        return {
-          ...prev,
-          pointer: coordinates,
-          blocks: prev.blocks.map((b, index) =>
-            prev.movingBlockIndex === index
-              ? { x: b.x + diff.x, y: b.y + diff.y }
-              : b
-          )
-        };
+  const calculateInitialBlockPositions = () => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const blocksPerRow = Math.floor(containerWidth / 128); // Adjust block size as needed
+      const blocks = coordinate.blocks.map((_, index) => {
+        const col = index % blocksPerRow;
+        const row = Math.floor(index / blocksPerRow);
+        return { x: col * 128, y: row * 128 }; // Adjust block size as needed
       });
-    },
-    [coordinate.movingBlockIndex]
-  );
+      setCoordinate((prev) => ({ ...prev, blocks }));
+    }
+  };
+  
+
+  React.useEffect(() => {
+    calculateInitialBlockPositions();
+    window.addEventListener("resize", calculateInitialBlockPositions);
+    return () => {
+      window.removeEventListener("resize", calculateInitialBlockPositions);
+    };
+  }, []);
+
+  const handleMouseMove = React.useCallback((event) => {
+    if (coordinate.movingBlockIndex === null) {
+      return;
+    }
+    const coordinates = { x: event.clientX, y: event.clientY };
+
+    setCoordinate((prev) => {
+      const diff = {
+        x: coordinates.x - prev.pointer.x,
+        y: coordinates.y - prev.pointer.y
+      };
+      return {
+        ...prev,
+        pointer: coordinates,
+        blocks: prev.blocks.map((b, index) =>
+          prev.movingBlockIndex === index
+            ? { x: b.x + diff.x, y: b.y + diff.y }
+            : b
+        )
+      };
+    });
+  }, [coordinate.movingBlockIndex]);
 
   const handleMouseUp = React.useCallback(() => {
     setCoordinate((prev) => ({
@@ -59,7 +78,8 @@ const useDraggable = ({ totalBlocks, blockInRow }) => {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    blocks: coordinate.blocks
+    blocks: coordinate.blocks,
+    containerRef
   };
 };
 

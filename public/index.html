@@ -25,6 +25,19 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+
+    <lr-config
+      ctx-name="my-uploader"
+      pubkey="356e54d0d5a61afb5a67"
+      maxLocalFileSizeBytes={10000000}
+      imgOnly={true}
+      sourceList="local, url, camera, dropbox"
+      useCloudImageEditor={false}
+    >
+    </lr-config>
+
+    <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
