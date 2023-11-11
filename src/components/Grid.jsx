@@ -9,7 +9,7 @@ import "../utils/items"
 import * as LR from "@uploadcare/blocks";
 import FileUploader from "../../src/FileUploader/FileUploader";
 
-import * as filestack from 'filestack-js';
+import initialItems from "../utils/items";
 
 const grid = 8;
 
@@ -31,11 +31,7 @@ const getListStyle = isDraggingOver => ({
 
 const Grid = ({ onDragEnd }) => {
 
-  const [items, setItems] = 
-    React.useState (
-      Array.from({ length: 20 }, (_, index) => 
-        `Item ${index + 1}`)
-    )
+  const [items, setItems] = React.useState (initialItems)
 
   const [photos, setPhotos] = React.useState([]);
 
@@ -49,20 +45,9 @@ const Grid = ({ onDragEnd }) => {
     reorderedItems.splice(result.destination.index, 0, reorderedItem); // Insert the item at the destination
   
     setItems(reorderedItems); // Update the state with the new order
-  };
-  window.addEventListener('DOMContentLoaded', function () {
-    const apikey = 'AbQEqEuNJRjuKAh1l5N1cz';
-    const client = filestack.init(apikey);
-    const options = {
-    fromSources: ["local_file_system","facebook","instagram","imagesearch","googledrive","dropbox","box","googlephotos","onedrive","unsplash"],
-      maxFiles: 20,
-      uploadInBackground: false,
-      onOpen: () => console.log('opened!'),
-      onUploadDone: (res) => console.log(res),
-    };
-    client.picker(options).open();
-  });
-  
+  }
+
+  console.log("Showing items:", items) 
 
   return (
 
